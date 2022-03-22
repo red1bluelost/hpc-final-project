@@ -3,12 +3,11 @@ package matrix
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
-	"os"
+	"io"
 	"strings"
 )
 
-func Export(name string, m Matrix) error {
+func Export(w io.Writer, m Matrix) error {
 	sb := strings.Builder{}
 	rows, cols := m.Dim()
 	if _, err := fmt.Fprintf(&sb, "%d %d\n", rows, cols); err != nil {
@@ -26,20 +25,21 @@ func Export(name string, m Matrix) error {
 			return err
 		}
 	}
-	ns := name + ".mat"
-	return ioutil.WriteFile(ns, []byte(sb.String()), 0666)
+	{
+		bytes := []byte(sb.String())
+		n, err := w.Write(bytes)
+		if err != nil {
+			return err
+		}
+		if n != len(bytes) {
+			return fmt.Errorf("failed to write the full matrix")
+		}
+	}
+	return nil
 }
 
-func ImportDense(name string) (*Dense, error) {
-	f, err1 := os.Open(name + ".mat")
-	if err1 != nil {
-		return nil, err1
-	}
-	_, err2 := f.Seek(0,0)
-	if err2 != nil {
-		return nil, err2
-	}
-	fr := bufio.NewScanner(f)
+func ImportDense(r io.Reader) (*Dense, error) {
+	fr := bufio.NewScanner(r)
 	var rows, cols int
 	if !fr.Scan() {
 		return nil, fmt.Errorf("missing row and/or column size")
