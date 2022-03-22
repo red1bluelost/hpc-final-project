@@ -55,8 +55,10 @@ func ImportDense(name string) (*Dense, error) {
 		ls := bufio.NewScanner(strings.NewReader(fr.Text()))
 		ls.Split(bufio.ScanWords)
 		for c := 0; c < cols; c++ {
-
-			_, e := fmt.Sscanf(fr.Text(), "%f", &data[r*cols+c])
+			if !ls.Scan() {
+				return nil, fmt.Errorf("missing data at (%d,%d)", r, c)
+			}
+			_, e := fmt.Sscanf(ls.Text(), "%f", &data[r*cols+c])
 			if e != nil {
 				return nil, e
 			}

@@ -2,9 +2,9 @@ package matrix
 
 import "log"
 
-func Multiply(A, C Matrix) *Dense {
+func Multiply(A, B Matrix) *Dense {
 	ar, ac := A.Dim()
-	br, bc := C.Dim()
+	br, bc := B.Dim()
 	if br != ac {
 		log.Panicf("mismatch of dimensions (%d x %d) and (%d x %d)", ar, ac, br, bc)
 	}
@@ -13,7 +13,7 @@ func Multiply(A, C Matrix) *Dense {
 		for c := 0; c < bc; c++ {
 			sum := 0.0
 			for k := 0; k < ac; k++ {
-				sum += A.At(r, k) * C.At(k, c)
+				sum += A.At(r, k) * B.At(k, c)
 			}
 			cdata[r*bc+c] = sum
 		}
