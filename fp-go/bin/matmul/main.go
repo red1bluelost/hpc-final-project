@@ -3,20 +3,26 @@ package main
 import (
 	"fmt"
 	"fp-go/matrix"
+	"log"
 )
 
 func main() {
-	A := matrix.NewDenseRaw(3, 3, []float64{
-		1, 2, 3,
-		4, 5, 6,
-		7, 8, 9,
-	})
+	A, err1 := matrix.ImportDense("A")
+	if err1 != nil {
+		log.Panic(err1)
+	}
 
-	B := matrix.NewDenseRaw(3, 3, []float64{
-		2, 0, 0,
-		0, 2, 0,
-		0, 0, 2,
-	})
+	B, err2 := matrix.ImportDense("B")
+	if err2 != nil {
+		log.Panic(err2)
+	}
 
-	fmt.Printf("C = %+v", matrix.Multiply(A, B))
+	C := matrix.Multiply(A, B)
+
+	fmt.Printf("C = %+v", C)
+
+	err := matrix.Export("C", C)
+	if err != nil {
+		panic("failed write")
+	}
 }

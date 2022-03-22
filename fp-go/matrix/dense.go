@@ -1,6 +1,8 @@
 package matrix
 
-import "log"
+import (
+	"log"
+)
 
 type Dense struct {
 	rows, cols int
