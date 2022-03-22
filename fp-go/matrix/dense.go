@@ -28,6 +28,14 @@ func NewDenseEmpty(r, c int) *Dense {
 	}
 }
 
+func NewDenseRandom(r, c int, rg func() float64) *Dense {
+	d := NewDenseEmpty(r, c)
+	for i := range d.data {
+		d.data[i] = rg()
+	}
+	return d
+}
+
 func (d *Dense) Raw() []float64 {
 	return d.data
 }
