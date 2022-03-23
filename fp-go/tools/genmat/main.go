@@ -6,6 +6,7 @@ import (
 	"fp-go/util"
 	"math/rand"
 	"os"
+	"time"
 )
 
 func usage() {
@@ -30,6 +31,7 @@ func main() {
 		usage()
 		return
 	}
+	rand.Seed(time.Now().UnixNano())
 	name := os.Args[3]
 	M := matrix.NewDenseRandom(rows, cols,
 		func() float64 { return rand.NormFloat64() * 50 })

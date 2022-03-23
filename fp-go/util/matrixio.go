@@ -8,6 +8,7 @@ import (
 
 func ImportMat(name string) *matrix.Dense {
 	f, err1 := os.OpenFile(name+".mat", os.O_RDONLY, 0666)
+	defer f.Close()
 	if err1 != nil {
 		log.Panic(err1)
 	}
@@ -20,6 +21,7 @@ func ImportMat(name string) *matrix.Dense {
 
 func ExportMat(name string, M matrix.Matrix) {
 	f, err1 := os.OpenFile(name+".mat", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
+	defer f.Close()
 	if err1 != nil {
 		log.Panic(err1)
 	}

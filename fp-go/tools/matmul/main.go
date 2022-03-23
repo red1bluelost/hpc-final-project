@@ -28,5 +28,7 @@ func main() {
 	fmt.Printf("Multiply: %s\n", durMultiply)
 	fmt.Printf("Export: %s\n", durExport)
 
-	//fmt.Printf("C = %+v", C)
+	//fmt.Printf("A = %+v\n", A)
+	//fmt.Printf("B = %+v\n", B)
+	//fmt.Printf("C = %+v\n", C)
 }

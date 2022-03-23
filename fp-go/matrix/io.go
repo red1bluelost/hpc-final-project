@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"strings"
+	"strconv"
 )
 
 func Export(wr io.Writer, m Matrix) error {
 	w := bufio.NewWriter(wr) // This adds a massive speed up to output
+	defer w.Flush()
 	rows, cols := m.Dim()
 	if _, err := fmt.Fprintf(w, "%d %d\n", rows, cols); err != nil {
 		return err
@@ -30,27 +31,31 @@ func Export(wr io.Writer, m Matrix) error {
 
 func ImportDense(r io.Reader) (*Dense, error) {
 	fr := bufio.NewScanner(r)
+	fr.Split(bufio.ScanWords)
 	var rows, cols int
+	var err error
 	if !fr.Scan() {
-		return nil, fmt.Errorf("missing row and/or column size")
+		return nil, fmt.Errorf("missing row size")
 	}
-	if _, e := fmt.Sscanf(fr.Text(), "%d %d", &rows, &cols); e != nil {
-		return nil, e
+	if rows, err = strconv.Atoi(fr.Text()); err != nil {
+		return nil, err
+	}
+	if !fr.Scan() {
+		return nil, fmt.Errorf("missing column size")
+	}
+	if cols, err = strconv.Atoi(fr.Text()); err != nil {
+		return nil, err
 	}
 	data := make([]float64, rows*cols)
 	for r := 0; r < rows; r++ {
-		if !fr.Scan() {
-			return nil, fmt.Errorf("missing row %d", r)
-		}
-		ls := bufio.NewScanner(strings.NewReader(fr.Text()))
-		ls.Split(bufio.ScanWords)
 		for c := 0; c < cols; c++ {
-			if !ls.Scan() {
+			if !fr.Scan() {
 				return nil, fmt.Errorf("missing data at (%d,%d)", r, c)
 			}
-			_, e := fmt.Sscanf(ls.Text(), "%f", &data[r*cols+c])
-			if e != nil {
-				return nil, e
+
+			if data[r*cols+c], err =
+				strconv.ParseFloat(fr.Text(), 64); err != nil {
+				return nil, err
 			}
 		}
 	}
