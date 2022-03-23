@@ -2,3 +2,6 @@
 *.exe
 *.mat
 *.vec
+
+matmul
+genmat
