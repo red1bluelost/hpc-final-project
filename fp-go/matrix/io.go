@@ -7,32 +7,22 @@ import (
 	"strings"
 )
 
-func Export(w io.Writer, m Matrix) error {
-	sb := strings.Builder{}
+func Export(wr io.Writer, m Matrix) error {
+	w := bufio.NewWriter(wr) // This adds a massive speed up to output
 	rows, cols := m.Dim()
-	if _, err := fmt.Fprintf(&sb, "%d %d\n", rows, cols); err != nil {
+	if _, err := fmt.Fprintf(w, "%d %d\n", rows, cols); err != nil {
 		return err
 	}
 	for r := 0; r < rows; r++ {
 		for c := 0; c < cols; c++ {
-			_, err := fmt.Fprintf(&sb, "%f ", m.At(r, c))
+			_, err := fmt.Fprintf(w, "%f ", m.At(r, c))
 			if err != nil {
 				return err
 			}
 		}
-		_, err := fmt.Fprint(&sb, "\n")
+		_, err := w.Write([]byte("\n"))
 		if err != nil {
 			return err
-		}
-	}
-	{
-		bytes := []byte(sb.String())
-		n, err := w.Write(bytes)
-		if err != nil {
-			return err
-		}
-		if n != len(bytes) {
-			return fmt.Errorf("failed to write the full matrix")
 		}
 	}
 	return nil
