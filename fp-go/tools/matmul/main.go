@@ -1,13 +1,19 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"fp-go/matrix"
 	"fp-go/util"
+	"os"
 	"time"
 )
 
+var verify = flag.Bool("verify", false,
+	"check parallel multiplication against a regular implementation")
+
 func main() {
+	flag.Parse()
 	start := time.Now()
 	A := util.ImportMat("A")
 	B := util.ImportMat("B")
@@ -27,6 +33,11 @@ func main() {
 	fmt.Printf("Import: %s\n", durImport)
 	fmt.Printf("Multiply: %s\n", durMultiply)
 	fmt.Printf("Export: %s\n", durExport)
+
+	if *verify && !matrix.Equal(C, matrix.Multiply(A, B)) {
+		fmt.Fprintf(os.Stderr, "Multiplication failed with unequal matrices\n")
+		os.Exit(1)
+	}
 
 	//fmt.Printf("A = %+v\n", A)
 	//fmt.Printf("B = %+v\n", B)
