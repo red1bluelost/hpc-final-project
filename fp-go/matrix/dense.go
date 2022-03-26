@@ -36,10 +36,6 @@ func NewDenseRandom(r, c int, rg func() float64) *Dense {
 	return d
 }
 
-func (d *Dense) Raw() []float64 {
-	return d.data
-}
-
 func (d *Dense) Dim() (r, c int) {
 	return d.rows, d.cols
 }

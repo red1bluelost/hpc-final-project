@@ -7,11 +7,13 @@ import (
 func Equal(A Matrix, B Matrix) bool {
 	ra, ca := A.Dim()
 	rb, cb := B.Dim()
-	if  ra != rb || ca != cb {
+	if ra != rb || ca != cb {
 		return false
 	}
-	if Ad, ok1 := A.(*Dense); ok1 {
-		if Bd, ok2 := B.(*Dense); ok2 {
+	{
+		Ad, ok1 := A.(*Dense)
+		Bd, ok2 := B.(*Dense)
+		if ok1 && ok2 {
 			return denseEqual(Ad, Bd)
 		}
 	}
