@@ -29,8 +29,8 @@ func Export(wr io.Writer, m Matrix) error {
 	return nil
 }
 
-func ImportDense(r io.Reader) (*Dense, error) {
-	fr := bufio.NewScanner(r)
+func ImportDense(rd io.Reader) (*Dense, error) {
+	fr := bufio.NewScanner(rd)
 	fr.Split(bufio.ScanWords)
 	var rows, cols int
 	var err error
@@ -52,9 +52,8 @@ func ImportDense(r io.Reader) (*Dense, error) {
 			if !fr.Scan() {
 				return nil, fmt.Errorf("missing data at (%d,%d)", r, c)
 			}
-
-			if data[r*cols+c], err =
-				strconv.ParseFloat(fr.Text(), 64); err != nil {
+			data[r*cols+c], err = strconv.ParseFloat(fr.Text(), 64)
+			if err != nil {
 				return nil, err
 			}
 		}
