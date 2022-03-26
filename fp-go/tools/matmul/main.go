@@ -38,8 +38,4 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Multiplication failed with unequal matrices\n")
 		os.Exit(1)
 	}
-
-	//fmt.Printf("A = %+v\n", A)
-	//fmt.Printf("B = %+v\n", B)
-	//fmt.Printf("C = %+v\n", C)
 }
