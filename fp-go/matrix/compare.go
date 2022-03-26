@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"math"
+	"fp-go/util/math"
 )
 
 func Equal(A Matrix, B Matrix) bool {
@@ -21,9 +21,9 @@ func Equal(A Matrix, B Matrix) bool {
 }
 
 func denseEqual(A *Dense, B *Dense) bool {
-	const TOLERANCE = 0.00001
+	const TOLERANCE = 0.0001
 	for i, v := range A.data {
-		if d := math.Abs(v - B.data[i]); d > TOLERANCE {
+		if !math.FEqual(v, B.data[i], TOLERANCE) {
 			return false
 		}
 	}
