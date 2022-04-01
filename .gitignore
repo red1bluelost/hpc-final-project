@@ -1,7 +1,17 @@
 .idea/
+*.swp
 *.exe
 *.mat
 *.vec
 
 matmul
+!matmul/
 genmat
+!genmat/
+fft
+!fft/
+genvec
+!genvec/
+
+cmake-build-*
+
