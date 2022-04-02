@@ -29,11 +29,17 @@ set(MATRIX_HEADER_FILES
 
 set(UTIL_SOURCE_FILES)
 set(UTIL_HEADER_FILES
-        ${PROJECT_HEADER_DIR}/Util/Math.h)
+        ${PROJECT_HEADER_DIR}/Util/Math.h
+        ${PROJECT_HEADER_DIR}/Util/ArgParse.h)
+
+set(SOURCE_FILES
+        ${MATRIX_SOURCE_FILES}
+        ${UTIL_SOURCE_FILES})
+set(HEADER_FILES
+        ${MATRIX_HEADER_FILES}
+        ${UTIL_HEADER_FILES})
 
 add_executable(matmul
         tools/matmul/main.cpp
-        ${MATRIX_SOURCE_FILES}
-        ${MATRIX_HEADER_FILES}
-        ${UTIL_SOURCE_FILES}
-        ${UTIL_HEADER_FILES})
+        ${SOURCE_FILES}
+        ${HEADER_FILES})
