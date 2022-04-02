@@ -27,4 +27,13 @@ set(MATRIX_HEADER_FILES
         ${PROJECT_HEADER_DIR}/Matrix/Matrix.h
         ${PROJECT_HEADER_DIR}/Matrix/Multiply.h)
 
-add_executable(matmul tools/matmul/main.cpp ${MATRIX_SOURCE_FILES} ${MATRIX_HEADER_FILES})
+set(UTIL_SOURCE_FILES)
+set(UTIL_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/Util/Math.h)
+
+add_executable(matmul
+        tools/matmul/main.cpp
+        ${MATRIX_SOURCE_FILES}
+        ${MATRIX_HEADER_FILES}
+        ${UTIL_SOURCE_FILES}
+        ${UTIL_HEADER_FILES})
