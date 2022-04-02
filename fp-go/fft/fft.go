@@ -8,8 +8,7 @@ import (
 
 func bitrev(x []complex128) []complex128 {
 	N := len(x)
-	r := 0
-	for n := 0; n <= N-2; n++ {
+	for n, r := 0, 0; n <= N-2; n++ {
 		if n < r {
 			x[n], x[r] = x[r], x[n]
 		}

@@ -6,7 +6,8 @@ import (
 
 func ILog2(i int) int {
 	r := 0
-	for ; 1<<r < i; r++ {
+	for 1<<r < i {
+		r++
 	}
 	return r
 }
