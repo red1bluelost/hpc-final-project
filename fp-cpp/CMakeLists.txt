@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(fp_cpp)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(
         -Wall
@@ -14,4 +14,17 @@ add_compile_options(
         $<$<CONFIG:RELEASE>:-O3>
 )
 
-add_executable(matmul tools/matmul/main.cpp)
+
+set(PROJECT_SOURCE_DIR lib)
+set(PROJECT_HEADER_DIR include)
+
+include_directories(${PROJECT_HEADER_DIR})
+
+set(MATRIX_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/Matrix/Matrix.cpp
+        ${PROJECT_SOURCE_DIR}/Matrix/Multiply.cpp)
+set(MATRIX_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/Matrix/Matrix.h
+        ${PROJECT_HEADER_DIR}/Matrix/Multiply.h)
+
+add_executable(matmul tools/matmul/main.cpp ${MATRIX_SOURCE_FILES} ${MATRIX_HEADER_FILES})
