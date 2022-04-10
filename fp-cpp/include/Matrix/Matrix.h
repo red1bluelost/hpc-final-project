@@ -1,12 +1,12 @@
 #ifndef FP_CPP_MATRIX_MATRIX_H
 #define FP_CPP_MATRIX_MATRIX_H
 
+#include <cassert>
 #include <cstddef>
+#include <istream>
+#include <ostream>
 #include <utility>
 #include <vector>
-#include <ostream>
-#include <istream>
-#include <cassert>
 
 namespace matrix {
 
@@ -20,7 +20,8 @@ class Dense {
 public:
   Dense() = default;
   Dense(IndexT Rows, IndexT Cols) : Rows(Rows), Cols(Cols), Data(Rows * Cols) {}
-  Dense(IndexT Rows, IndexT Cols, std::vector<double> &&V) : Rows(Rows), Cols(Cols), Data(V) {
+  Dense(IndexT Rows, IndexT Cols, std::vector<double> &&V)
+      : Rows(Rows), Cols(Cols), Data(V) {
     assert(V.size() == Rows * Cols && "size did not match");
   }
   Dense(const Dense &) = default;
@@ -33,7 +34,9 @@ public:
   bool operator!=(const Dense &M) const noexcept = default;
 
   [[nodiscard]] DimenionT dim() const noexcept { return {Rows, Cols}; };
-  [[nodiscard]] const double &at(IndexT R, IndexT C) const { return Data[R * Cols + C]; }
+  [[nodiscard]] const double &at(IndexT R, IndexT C) const {
+    return Data[R * Cols + C];
+  }
   [[nodiscard]] double &at(IndexT R, IndexT C) { return Data[R * Cols + C]; }
 };
 
@@ -42,4 +45,4 @@ public:
 std::ostream &operator<<(std::ostream &OS, const matrix::Dense &M);
 std::istream &operator>>(std::istream &IS, matrix::Dense &M);
 
-#endif //FP_CPP_MATRIX_MATRIX_H
+#endif // FP_CPP_MATRIX_MATRIX_H

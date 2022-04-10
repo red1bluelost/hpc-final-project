@@ -1,8 +1,8 @@
 #ifndef FP_CPP_FFT_VECTOR_H
 #define FP_CPP_FFT_VECTOR_H
 
-#include <cstddef>
 #include <complex>
+#include <cstddef>
 #include <vector>
 
 namespace fft {
@@ -19,4 +19,4 @@ class Vector : public std::vector<CmplxT> {
 std::ostream &operator<<(std::ostream &OS, const fft::Vector &V);
 std::istream &operator>>(std::istream &IS, fft::Vector &V);
 
-#endif //FP_CPP_FFT_VECTOR_H
+#endif // FP_CPP_FFT_VECTOR_H

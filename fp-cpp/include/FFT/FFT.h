@@ -9,4 +9,4 @@ void fftDitR2(Vector &X);
 
 } // namespace fft
 
-#endif //FP_CPP_FFT_FFT_H
+#endif // FP_CPP_FFT_FFT_H

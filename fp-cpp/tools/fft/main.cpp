@@ -4,7 +4,6 @@
 #include <iostream>
 
 int main() {
-
   fft::Vector V(8);
   for (std::size_t I = 0; I < 8; ++I) {
     if (I < 4)

@@ -26,8 +26,8 @@ void fft::fftDitR2(Vector &X) {
     int L = 1 << M;
     int L2 = L / 2;
     for (int IR = 0; IR < L2; ++IR) {
-      double D = -2 * std::numbers::pi_v<double>
-          * static_cast<double>(IR) / static_cast<double>(L);
+      double D = -2 * std::numbers::pi_v<double> * static_cast<double>(IR) /
+                 static_cast<double>(L);
       CmplxT W = std::polar(1.0, D);
       for (int IT = IR; IT < N; IT += L) {
         int IB = IT + L2;
