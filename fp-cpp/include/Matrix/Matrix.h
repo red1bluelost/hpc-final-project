@@ -10,8 +10,8 @@
 
 namespace matrix {
 
-typedef std::size_t IndexT;
-typedef std::pair<IndexT, IndexT> DimenionT;
+using IndexT = std::size_t;
+using DimenionT = std::pair<IndexT, IndexT>;
 
 class Dense {
   IndexT Rows{}, Cols{};
