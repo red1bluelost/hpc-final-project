@@ -20,6 +20,13 @@ set(PROJECT_HEADER_DIR include)
 
 include_directories(${PROJECT_HEADER_DIR})
 
+set(FFT_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/FFT/FFT.cpp
+        ${PROJECT_SOURCE_DIR}/FFT/Vector.cpp)
+set(FFT_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/FFT/FFT.h
+        ${PROJECT_HEADER_DIR}/FFT/Vector.h)
+
 set(MATRIX_SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/Matrix/Matrix.cpp
         ${PROJECT_SOURCE_DIR}/Matrix/Multiply.cpp)
@@ -32,14 +39,16 @@ set(UTIL_HEADER_FILES
         ${PROJECT_HEADER_DIR}/Util/Math.h
         ${PROJECT_HEADER_DIR}/Util/ArgParse.h)
 
-set(SOURCE_FILES
-        ${MATRIX_SOURCE_FILES}
-        ${UTIL_SOURCE_FILES})
-set(HEADER_FILES
-        ${MATRIX_HEADER_FILES}
+add_executable(fft
+        tools/fft/main.cpp
+        ${FFT_SOURCE_FILES}
+        ${FFT_HEADER_FILES}
+        ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
 
 add_executable(matmul
         tools/matmul/main.cpp
-        ${SOURCE_FILES}
-        ${HEADER_FILES})
+        ${MATRIX_SOURCE_FILES}
+        ${MATRIX_HEADER_FILES}
+        ${UTIL_SOURCE_FILES}
+        ${UTIL_HEADER_FILES})
