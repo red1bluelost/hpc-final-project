@@ -27,9 +27,11 @@ set(FFT_SOURCE_FILES)
 set(FFT_HEADER_FILES)
 
 set(MATRIX_SOURCE_FILES
-        ${PROJECT_SOURCE_DIR}/matrix/matrix.c)
+        ${PROJECT_SOURCE_DIR}/matrix/matrix.c
+        ${PROJECT_SOURCE_DIR}/matrix/multiply.c)
 set(MATRIX_HEADER_FILES
-        ${PROJECT_HEADER_DIR}/matrix/matrix.h)
+        ${PROJECT_HEADER_DIR}/matrix/matrix.h
+        ${PROJECT_HEADER_DIR}/matrix/multiply.h)
 
 set(UTIL_SOURCE_FILES)
 set(UTIL_HEADER_FILES)
