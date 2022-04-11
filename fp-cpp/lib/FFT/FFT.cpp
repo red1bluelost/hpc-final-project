@@ -7,7 +7,7 @@
 using namespace fft;
 
 static void bitrev(Vector &X) {
-  int N = X.size();
+  int N = static_cast<int>(X.size());
   for (int I = 0, R = 0; I <= N - 2; ++I) {
     if (I < R)
       std::swap(X[I], X[R]);
@@ -19,7 +19,7 @@ static void bitrev(Vector &X) {
 }
 
 void fft::fftDitR2(Vector &X) {
-  int N = X.size();
+  int N = static_cast<int>(X.size());
   int NU = util::log2(N);
   bitrev(X);
   for (int M = 1; M <= NU; ++M) {

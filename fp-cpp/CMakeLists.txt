@@ -7,7 +7,7 @@ add_compile_options(
         -Wall
         -Wextra
         -Wpedantic
-        -Wextra
+        -Werror
         $<$<CONFIG:DEBUG>:-g3>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-g0>
