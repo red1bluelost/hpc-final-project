@@ -29,10 +29,10 @@ func main() {
 	durMultiply := endMultiply.Sub(endImport)
 	durExport := endExport.Sub(endMultiply)
 
-	fmt.Printf("-- Timing --\n")
-	fmt.Printf("Import: %s\n", durImport)
-	fmt.Printf("Multiply: %s\n", durMultiply)
-	fmt.Printf("Export: %s\n", durExport)
+	fmt.Printf("-- Timing MatMul Go --\n")
+	fmt.Printf("Import: %d us\n", durImport.Microseconds())
+	fmt.Printf("Multiply: %d us\n", durMultiply.Microseconds())
+	fmt.Printf("Export: %d us\n", durExport.Microseconds())
 
 	if *verify && !matrix.Equal(C, matrix.Multiply(A, B)) {
 		fmt.Fprintf(os.Stderr, "Multiplication failed with unequal matrices\n")
