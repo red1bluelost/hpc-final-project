@@ -6,6 +6,7 @@ import (
 	"fp-go/matrix"
 	"fp-go/util"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -15,8 +16,20 @@ var verify = flag.Bool("verify", false,
 func main() {
 	flag.Parse()
 	start := time.Now()
-	A := util.ImportMat("A")
-	B := util.ImportMat("B")
+	var A, B *matrix.Dense
+	{
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			A = util.ImportMat("A")
+		}()
+		go func() {
+			defer wg.Done()
+			B = util.ImportMat("B")
+		}()
+		wg.Wait()
+	}
 	endImport := time.Now()
 
 	C := matrix.Multiply(A, B)
