@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.18)
 project(fp_cpp)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Threads REQUIRED)
 
 add_compile_options(
         -Wall
@@ -52,3 +55,4 @@ add_executable(matmul
         ${MATRIX_HEADER_FILES}
         ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
+target_link_libraries(matmul Threads::Threads)
