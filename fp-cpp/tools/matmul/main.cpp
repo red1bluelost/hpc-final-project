@@ -2,21 +2,40 @@
 #include "Matrix/Multiply.h"
 #include "Util/ArgParse.h"
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 
 int main(const int Argc, const char *Argv[]) {
+  std::ios_base::sync_with_stdio(false);
   bool Verify = argBool(Argc, Argv, "-v");
 
+  auto Start = std::chrono::high_resolution_clock::now();
   std::ifstream AFile("A.mat"), BFile("B.mat");
   matrix::Dense A, B;
   AFile >> A;
   BFile >> B;
+  auto EndImport = std::chrono::high_resolution_clock::now();
 
   matrix::Dense C = matrix::multiply(A, B);
+  auto EndMultiply = std::chrono::high_resolution_clock::now();
 
   std::ofstream CFile("C.mat");
   CFile << C;
+  auto EndExport = std::chrono::high_resolution_clock::now();
+
+  {
+    auto DurImport = EndImport - Start;
+    auto DurMultiply = EndMultiply - EndImport;
+    auto DurExport = EndExport - EndMultiply;
+    std::cout << "-- Timing MatMul C++ --\n";
+    using namespace std::chrono;
+    for (const auto &[S, D] : {std::make_pair("Import", DurImport),
+                               std::make_pair("Multiply", DurMultiply),
+                               std::make_pair("Export", DurExport)})
+      std::cout << S << ": " << duration_cast<microseconds>(D).count()
+                << "us\n";
+  }
 
   if (Verify && C != matrix::multiply(A, B)) {
     std::cerr << "multiplication failed\n";
