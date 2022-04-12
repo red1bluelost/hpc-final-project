@@ -35,10 +35,10 @@ func TestFffDitR2(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := FffDitR2(tt.arg)
-			for i, v := range got {
+			FffDitR2(tt.arg)
+			for i, v := range tt.arg {
 				if !umath.CEqual(v, tt.want[i], 0.0001) {
-					t.Errorf("FffDitR2() = %v, want %v", got, tt.want)
+					t.Errorf("FffDitR2() = %v, want %v", tt.arg, tt.want)
 				}
 			}
 		})

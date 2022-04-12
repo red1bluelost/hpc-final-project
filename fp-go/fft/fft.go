@@ -6,7 +6,7 @@ import (
 	"math/cmplx"
 )
 
-func bitrev(x []complex128) []complex128 {
+func bitrev(x []complex128) {
 	N := len(x)
 	for n, r := 0, 0; n <= N-2; n++ {
 		if n < r {
@@ -18,13 +18,12 @@ func bitrev(x []complex128) []complex128 {
 		}
 		r += k
 	}
-	return x
 }
 
-func FffDitR2(x []complex128) []complex128 {
+func FffDitR2(x []complex128) {
 	n := len(x)
 	nu := umath.ILog2(n)
-	x = bitrev(x)
+	bitrev(x)
 	for m := 1; m <= nu; m++ {
 		l := 1 << m
 		l2 := l / 2
@@ -38,5 +37,4 @@ func FffDitR2(x []complex128) []complex128 {
 			}
 		}
 	}
-	return x
 }

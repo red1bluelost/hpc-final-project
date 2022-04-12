@@ -19,27 +19,27 @@ func main() {
 	X := util.ImportVec("X")
 	endImport := time.Now()
 
-	X = fft.FffDitR2(X)
-	endMultiply := time.Now()
+	fft.FffDitR2(X)
+	endFFT := time.Now()
 
 	util.ExportVec("Xf", X)
 	endExport := time.Now()
 
 	durImport := endImport.Sub(start)
-	durMultiply := endMultiply.Sub(endImport)
-	durExport := endExport.Sub(endMultiply)
+	durFFT := endFFT.Sub(endImport)
+	durExport := endExport.Sub(endFFT)
 
 	fmt.Printf("-- Timing FFT Go --\n")
 	fmt.Printf("Import: %d us\n", durImport.Microseconds())
-	fmt.Printf("FFT: %d us\n", durMultiply.Microseconds())
+	fmt.Printf("FFT: %d us\n", durFFT.Microseconds())
 	fmt.Printf("Export: %d us\n", durExport.Microseconds())
 
 	if *verify {
 		XC := util.ImportVec("X")
-		XC = fft.FffDitR2(XC)
+		fft.FffDitR2(XC)
 		for i, v := range XC {
 			if !umath.CEqual(v, X[i], 0x0001) {
-				fmt.Fprintf(os.Stderr, "Multiplication failed with unequal matrices\n")
+				fmt.Fprintf(os.Stderr, "fft failed verification with unequal vectors\n")
 				os.Exit(1)
 			}
 		}
