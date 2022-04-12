@@ -22,6 +22,7 @@ int main(const int Argc, const char *Argv[]) {
       char Buf[BufSize];
       F.rdbuf()->pubsetbuf(Buf, BufSize);
       F.open(FName);
+      assert(F && "input file couldn't open");
       F >> Mat;
     };
     std::thread AThread(FileThreadFunc, "A.mat", std::ref(A));

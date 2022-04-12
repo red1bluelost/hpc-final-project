@@ -11,12 +11,14 @@ add_compile_options(
         -Wextra
         -Wpedantic
         -Werror
+        $<$<CONFIG:DEBUG>:-fsanitize=address>
         $<$<CONFIG:DEBUG>:-g3>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-g0>
-        $<$<CONFIG:RELEASE>:-O3>
-)
+        $<$<CONFIG:RELEASE>:-O3>)
 
+add_link_options(
+        $<$<CONFIG:DEBUG>:-fsanitize=address>)
 
 set(PROJECT_SOURCE_DIR lib)
 set(PROJECT_HEADER_DIR include)

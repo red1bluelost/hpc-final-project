@@ -9,16 +9,21 @@ std::ostream &operator<<(std::ostream &OS, const Vector &V) {
   OS << V.size() << '\n' << std::setprecision(8);
   for (const auto &C : V) {
     double R = C.real(), I = C.imag();
-    OS << '(' << R << (I < 0 ? "" : "+") << I << "i)\n";
+    OS << '(' << std::noshowpos << R << std::showpos << I << "i)\n";
   }
-  return OS;
+  return OS << std::noshowpos;
 }
 
 std::istream &operator>>(std::istream &IS, Vector &V) {
   V.clear();
-  fft::IndexT Size;
+  IndexT Size;
   IS >> Size;
   V.reserve(Size);
-
+  for (IndexT I = 0; I < Size; ++I) {
+    char IgnC;
+    double Real, Imag;
+    IS >> IgnC >> Real >> Imag >> IgnC >> IgnC;
+    V.emplace_back(Real, Imag);
+  }
   return IS;
 }
