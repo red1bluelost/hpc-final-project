@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@ int main(const int argc, const char *argv[]) {
     FILE *vfile = fopen("X.vec", "r");
     assert(vfile != NULL && "could not open file X");
     int err = fft_vector_read(vfile, &vec);
-    (void)err, assert(err == 0 && "failed to load matrix A");
+    (void)err, assert(err == 0 && "failed to load vector X");
     fclose(vfile);
   }
   uint64_t end_import = clock_us();
@@ -49,6 +50,22 @@ int main(const int argc, const char *argv[]) {
   }
 
   if (verify) {
+    fft_vector_t vec_c;
+    FILE *vfile = fopen("X.vec", "r");
+    assert(vfile != NULL && "could not open file X");
+    fseek(vfile, 0, SEEK_SET);
+    int err = fft_vector_read(vfile, &vec_c);
+    (void)err, assert(err == 0 && "failed to load vector X");
+    fclose(vfile);
+    fft_dit_r2(&vec_c);
+    for (size_t i = 0, e = vec_c.size; i < e; ++i) {
+      if (fabs(creal(vec.data[i]) - creal(vec_c.data[i])) > 0.0001 ||
+          fabs(cimag(vec.data[i]) - cimag(vec_c.data[i])) > 0.0001) {
+        fprintf(stderr, "fft failed verification with unequal vectors\n");
+        return 1;
+      }
+    }
+    fft_vector_destroy(&vec_c);
   }
 
   fft_vector_destroy(&vec);
