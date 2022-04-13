@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "fft/vector.h"
+#include "fft/fft.h"
 #include "util/argparse.h"
 
 static uint64_t clock_us() {
@@ -27,6 +27,7 @@ int main(const int argc, const char *argv[]) {
   }
   uint64_t end_import = clock_us();
 
+  fft_dit_r2(&vec);
   uint64_t end_fft = clock_us();
 
   {
@@ -50,5 +51,6 @@ int main(const int argc, const char *argv[]) {
   if (verify) {
   }
 
+  fft_vector_destroy(&vec);
   return 0;
 }

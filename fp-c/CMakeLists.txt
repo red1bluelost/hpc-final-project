@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.18)
 project(fp_c C)
 
 set(CMAKE_C_STANDARD 11)
@@ -29,8 +29,10 @@ set(PROJECT_HEADER_DIR include)
 include_directories(${PROJECT_HEADER_DIR})
 
 set(FFT_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/fft/fft.c
         ${PROJECT_SOURCE_DIR}/fft/vector.c)
 set(FFT_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/fft/fft.h
         ${PROJECT_HEADER_DIR}/fft/vector.h)
 
 set(MATRIX_SOURCE_FILES
@@ -51,6 +53,7 @@ add_executable(fft
         ${FFT_HEADER_FILES}
         ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
+target_link_libraries(fft m)
 
 add_executable(matmul
         tools/matmul/main.c
