@@ -28,8 +28,10 @@ set(PROJECT_HEADER_DIR include)
 
 include_directories(${PROJECT_HEADER_DIR})
 
-set(FFT_SOURCE_FILES)
-set(FFT_HEADER_FILES)
+set(FFT_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/fft/vector.c)
+set(FFT_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/fft/vector.h)
 
 set(MATRIX_SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/matrix/matrix.c
@@ -38,8 +40,10 @@ set(MATRIX_HEADER_FILES
         ${PROJECT_HEADER_DIR}/matrix/matrix.h
         ${PROJECT_HEADER_DIR}/matrix/multiply.h)
 
-set(UTIL_SOURCE_FILES lib/util/argparse.c include/util/argparse.h)
-set(UTIL_HEADER_FILES lib/util/argparse.c include/util/argparse.h)
+set(UTIL_SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/util/argparse.c)
+set(UTIL_HEADER_FILES
+        ${PROJECT_HEADER_DIR}/util/argparse.h)
 
 add_executable(fft
         tools/fft/main.c

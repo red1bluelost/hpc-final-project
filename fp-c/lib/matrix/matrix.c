@@ -32,11 +32,9 @@ int matrix_write_r(FILE* restrict stream, const double* restrict data,
   int ret;
   if ((ret = fprintf(stream, "%zu %zu\n", rows, cols)) < 4) return ret;
   for (size_t i = 0; i < rows; ++i) {
-    for (size_t j = 0; j < cols; ++j) {
-      size_t idx = i * cols + j;
-      double d = data[idx];
-      if ((ret = fprintf(stream, "%lf ", d) < 2)) return ret;
-    }
+    for (size_t j = 0; j < cols; ++j)
+      if ((ret = fprintf(stream, "%lf ", data[i * cols + j]) < 2)) return ret;
+
     if ((ret = fprintf(stream, "\n") < 1)) return ret;
   }
   return 0;
