@@ -39,9 +39,8 @@ int main(const int Argc, const char *Argv[]) {
   auto EndExport = std::chrono::high_resolution_clock::now();
 
   {
-    auto DurImport = EndImport - Start;
-    auto DurFFT = EndFFT - EndImport;
-    auto DurExport = EndExport - EndFFT;
+    auto DurImport = EndImport - Start, DurFFT = EndFFT - EndImport,
+         DurExport = EndExport - EndFFT;
     std::cout << "-- Timing FFT C++ --\n";
     using namespace std::chrono;
     for (const auto &[S, D] :

@@ -45,9 +45,8 @@ int main(const int Argc, const char *Argv[]) {
   auto EndExport = std::chrono::high_resolution_clock::now();
 
   {
-    auto DurImport = EndImport - Start;
-    auto DurMultiply = EndMultiply - EndImport;
-    auto DurExport = EndExport - EndMultiply;
+    auto DurImport = EndImport - Start, DurMultiply = EndMultiply - EndImport,
+         DurExport = EndExport - EndMultiply;
     std::cout << "-- Timing MatMul C++ --\n";
     using namespace std::chrono;
     for (const auto &[S, D] : {std::make_pair("Import", DurImport),
