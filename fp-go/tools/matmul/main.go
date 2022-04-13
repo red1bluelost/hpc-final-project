@@ -32,7 +32,7 @@ func main() {
 	}
 	endImport := time.Now()
 
-	C := matrix.Multiply(A, B)
+	C := matrix.MultiplyParallel(A, B)
 	endMultiply := time.Now()
 
 	util.ExportMat("C", C)

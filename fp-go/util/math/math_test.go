@@ -15,3 +15,39 @@ func TestILog2(t *testing.T) {
 		})
 	}
 }
+
+func TestDivRU(t *testing.T) {
+	type args struct {
+		n int
+		d int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "10/6 = 2",
+			args: args{
+				n: 10,
+				d: 6,
+			},
+			want: 2,
+		},
+		{
+			name: "1233/81 = 16",
+			args: args{
+				n: 1233,
+				d: 81,
+			},
+			want: 16,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DivRU(tt.args.n, tt.args.d); got != tt.want {
+				t.Errorf("DivRU() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
