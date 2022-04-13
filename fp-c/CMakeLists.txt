@@ -3,19 +3,24 @@ project(fp_c C)
 
 set(CMAKE_C_STANDARD 11)
 
+set(CMAKE_USE_PTHREADS_INIT true)
+set(CMAKE_USE_PTHREADS_INIT ON)
+
+find_package(Threads REQUIRED)
+
 add_compile_options(
         -Wall
         -Wextra
         -Wpedantic
         -Werror
+        $<$<CONFIG:DEBUG>:-fsanitize=address>
         $<$<CONFIG:DEBUG>:-g3>
         $<$<CONFIG:DEBUG>:-Og>
         $<$<CONFIG:RELEASE>:-g0>
-        $<$<CONFIG:RELEASE>:-O3>
-        -fsanitize=address
-)
+        $<$<CONFIG:RELEASE>:-O3>)
 
-add_link_options(-fsanitize=address)
+add_link_options(
+        $<$<CONFIG:DEBUG>:-fsanitize=address>)
 
 
 set(PROJECT_SOURCE_DIR lib)
@@ -33,8 +38,8 @@ set(MATRIX_HEADER_FILES
         ${PROJECT_HEADER_DIR}/matrix/matrix.h
         ${PROJECT_HEADER_DIR}/matrix/multiply.h)
 
-set(UTIL_SOURCE_FILES)
-set(UTIL_HEADER_FILES)
+set(UTIL_SOURCE_FILES lib/util/argparse.c include/util/argparse.h)
+set(UTIL_HEADER_FILES lib/util/argparse.c include/util/argparse.h)
 
 add_executable(fft
         tools/fft/main.c
@@ -49,3 +54,4 @@ add_executable(matmul
         ${MATRIX_HEADER_FILES}
         ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
+target_link_libraries(matmul Threads::Threads)

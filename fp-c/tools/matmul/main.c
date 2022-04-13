@@ -4,8 +4,11 @@
 
 #include "matrix/matrix.h"
 #include "matrix/multiply.h"
+#include "util/argparse.h"
 
-int main() {
+int main(const int argc, const char *argv[]) {
+  bool verify = arg_bool(argc, argv, "-v");
+
   FILE *afile = fopen("A.mat", "r");
   assert(afile != NULL && "could not open file A");
   FILE *bfile = fopen("B.mat", "r");
@@ -25,6 +28,16 @@ int main() {
   {
     int err = matrix_write(stdout, &mat_c);
     assert(err == 0 && "failed to write matrix C");
+  }
+
+  if (verify) {
+    matrix_t mat_v;
+    matrix_multiply(&mat_a, &mat_b, &mat_v);
+    if (!matrix_equal(&mat_c, &mat_v)) {
+      fprintf(stderr, "multiplication failed\n");
+      return EXIT_FAILURE;
+    }
+    matrix_destroy(&mat_v);
   }
 
   fclose(afile);
