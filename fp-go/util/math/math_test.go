@@ -51,3 +51,36 @@ func TestDivRU(t *testing.T) {
 		})
 	}
 }
+
+func TestMinI(t *testing.T) {
+	type args struct {
+		vals []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "min(3,5,10,2)=2",
+			args: args{
+				vals: []int{3, 5, 10, 2},
+			},
+			want: 2,
+		},
+		{
+			name: "min(2,0,100,5)=0",
+			args: args{
+				vals: []int{2, 0, 100, 5},
+			},
+			want: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MinI(tt.args.vals...); got != tt.want {
+				t.Errorf("MinI() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

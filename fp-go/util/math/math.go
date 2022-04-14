@@ -24,10 +24,12 @@ func DivRU(n, d int) int {
 	return 1 + (n-1)/d
 }
 
-func MinI(a, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
+func MinI(vals ...int) int {
+	min := math.MaxInt
+	for _, v := range vals {
+		if v < min {
+			min = v
+		}
 	}
+	return min
 }
