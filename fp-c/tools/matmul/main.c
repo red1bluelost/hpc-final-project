@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,22 +15,33 @@ static uint64_t clock_us() {
   return (t.tv_sec * 1000000) + (t.tv_nsec / 1000);
 }
 
+typedef struct {
+  const char *fname;
+  matrix_t *mat;
+} file_thread_arg_t;
+
+static void *file_thread(void *argp) {
+  file_thread_arg_t *args = (file_thread_arg_t *)argp;
+  FILE *file = fopen(args->fname, "r");
+  assert(file != NULL && "could not open file");
+  int err = matrix_read(file, args->mat);
+  (void)err, assert(err == 0 && "failed to load matrix");
+  fclose(file);
+  return NULL;
+}
+
 int main(const int argc, const char *argv[]) {
   bool verify = arg_bool(argc, argv, "-v");
 
   uint64_t start = clock_us();
   matrix_t mat_a, mat_b;
   {
-    FILE *afile = fopen("A.mat", "r");
-    assert(afile != NULL && "could not open file A");
-    FILE *bfile = fopen("B.mat", "r");
-    assert(bfile != NULL && "could not open file B");
-    int err = matrix_read(afile, &mat_a);
-    (void)err, assert(err == 0 && "failed to load matrix A");
-    err = matrix_read(bfile, &mat_b);
-    (void)err, assert(err == 0 && "failed to load matrix B");
-    fclose(afile);
-    fclose(bfile);
+    pthread_t thrd_a, thrd_b;
+    file_thread_arg_t args_a = {"A.mat", &mat_a}, args_b = {"B.mat", &mat_b};
+    pthread_create(&thrd_a, NULL, file_thread, &args_a);
+    pthread_create(&thrd_b, NULL, file_thread, &args_b);
+    pthread_join(thrd_a, NULL);
+    pthread_join(thrd_b, NULL);
   }
   uint64_t end_import = clock_us();
 
