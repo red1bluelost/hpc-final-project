@@ -15,7 +15,7 @@ Dense matrix::multiply(const Dense &A, const Dense &B) {
   for (IndexT R = 0; R < ARows; ++R) {
     for (IndexT C = 0; C < BCols; ++C) {
       double Sum = 0.0;
-      for (IndexT K = 0; K < ACols; K++)
+      for (IndexT K = 0; K < ACols; ++K)
         Sum += A.at(R, K) * B.at(K, C);
       CMat.at(R, C) = Sum;
     }
@@ -33,10 +33,10 @@ Dense matrix::multiplyBlocked(const Dense &A, const Dense &B) {
   for (IndexT RO = 0; RO < ARows; RO += BlockSize) {
     for (IndexT CO = 0; CO < BCols; CO += BlockSize) {
       for (IndexT KO = 0; KO < ACols; KO += BlockSize) {
-        for (IndexT R = RO; R < std::min(RO + BlockSize, ARows); R++) {
-          for (IndexT C = CO; C < std::min(CO + BlockSize, BCols); C++) {
+        for (IndexT R = RO; R < std::min(RO + BlockSize, ARows); ++R) {
+          for (IndexT C = CO; C < std::min(CO + BlockSize, BCols); ++C) {
             double Sum = KO == 0 ? 0.0 : CMat.at(R, C);
-            for (IndexT K = KO; K < std::min(KO + BlockSize, ACols); K++)
+            for (IndexT K = KO; K < std::min(KO + BlockSize, ACols); ++K)
               Sum += A.at(R, K) * B.at(K, C);
             CMat.at(R, C) = Sum;
           }
@@ -63,10 +63,10 @@ Dense matrix::multiplyParallel(const Dense &A, const Dense &B) {
   for (auto &Thrd : Thrds)
     Thrd = std::thread(
         [ARows, ACols, BCols, &A, &B, &CMat](IndexT Start, IndexT Width) {
-          for (IndexT R = Start; R < std::min(Start + Width, ARows); R++) {
-            for (IndexT C = 0; C < BCols; C++) {
+          for (IndexT R = Start; R < std::min(Start + Width, ARows); ++R) {
+            for (IndexT C = 0; C < BCols; ++C) {
               double Sum = 0.0;
-              for (IndexT K = 0; K < ACols; K++)
+              for (IndexT K = 0; K < ACols; ++K)
                 Sum += A.at(R, K) * B.at(K, C);
               CMat.at(R, C) = Sum;
             }
@@ -101,14 +101,27 @@ Dense matrix::multiplyFast(const Dense &A, const Dense &B) {
                RO += BlockSize) {
             for (IndexT CO = 0; CO < BCols; CO += BlockSize) {
               for (IndexT KO = 0; KO < ACols; KO += BlockSize) {
-                for (IndexT R = RO; R < std::min(RO + BlockSize, ARows); R++) {
-                  for (IndexT C = CO; C < std::min(CO + BlockSize, BCols);
-                       C++) {
-                    double Sum = KO == 0 ? 0.0 : CMat.at(R, C);
-                    for (IndexT K = KO; K < std::min(KO + BlockSize, ACols);
-                         K++)
-                      Sum += A.at(R, K) * B.at(K, C);
-                    CMat.at(R, C) = Sum;
+                for (IndexT R = RO; R < std::min(RO + BlockSize, ARows); ++R) {
+                  for (IndexT C = CO; C < std::min(CO + BlockSize, BCols);) {
+                    if (C + 4 <= std::min(CO + BlockSize, BCols)) {
+                      std::array<double, 4> Sum;
+                      for (IndexT I = 0; double &S : Sum)
+                        S = KO == 0 ? 0.0 : CMat.at(R, C + (I++));
+                      for (IndexT K = KO; K < std::min(KO + BlockSize, ACols);
+                           ++K)
+                        for (IndexT I = 0; double &S : Sum)
+                          S += A.at(R, K) * B.at(K, C + (I++));
+                      for (IndexT I = 0; double &S : Sum)
+                        CMat.at(R, C + (I++)) = S;
+                      C += 4;
+                    } else {
+                      double Sum = KO == 0 ? 0.0 : CMat.at(R, C);
+                      for (IndexT K = KO; K < std::min(KO + BlockSize, ACols);
+                           ++K)
+                        Sum += A.at(R, K) * B.at(K, C);
+                      CMat.at(R, C) = Sum;
+                      ++C;
+                    }
                   }
                 }
               }
