@@ -26,11 +26,15 @@ func Multiply(A, B Matrix) *Dense {
 	return NewDenseRaw(ar, bc, cdata)
 }
 
-func parallelbody(wg *sync.WaitGroup, start, width int, A, B Matrix, cdata []float64) {
+func MultiplyBlocked(A, B Matrix) *Dense {
 	ar, ac := A.Dim()
-	_, bc := B.Dim()
+	br, bc := B.Dim()
+	if br != ac {
+		log.Panicf("mismatch of dimensions (%d x %d) and (%d x %d)", ar, ac, br, bc)
+	}
+	cdata := make([]float64, ar*bc)
 	const blockSize = 8
-	for ro := start; ro < umath.MinI(start+width, ar); ro += blockSize {
+	for ro := 0; ro < ar; ro += blockSize {
 		for co := 0; co < bc; co += blockSize {
 			for ko := 0; ko < ac; ko += blockSize {
 				for r := ro; r < umath.MinI(ro+blockSize, ar); r++ {
@@ -50,7 +54,7 @@ func parallelbody(wg *sync.WaitGroup, start, width int, A, B Matrix, cdata []flo
 			}
 		}
 	}
-	wg.Done()
+	return NewDenseRaw(ar, bc, cdata)
 }
 
 func MultiplyParallel(A, B Matrix) *Dense {
@@ -62,12 +66,67 @@ func MultiplyParallel(A, B Matrix) *Dense {
 	cdata := make([]float64, ar*bc)
 
 	maxProc := runtime.GOMAXPROCS(0)
-	width := umath.DivRU(ar, maxProc)
+	workWidth := umath.DivRU(ar, maxProc)
 
 	var wg sync.WaitGroup
 	wg.Add(maxProc)
 	for pnum := 0; pnum < maxProc; pnum++ {
-		go parallelbody(&wg, pnum*width, (pnum+1)*width, A, B, cdata)
+		go func(start, width int) {
+			for r := start; r < umath.MinI(start+width, ar); r++ {
+				for c := 0; c < bc; c++ {
+					sum := 0.0
+					for k := 0; k < ac; k++ {
+						sum += A.At(r, k) * B.At(k, c)
+					}
+					cdata[r*bc+c] = sum
+				}
+			}
+			wg.Done()
+		}(pnum*workWidth, (pnum+1)*workWidth)
+	}
+	wg.Wait()
+
+	return NewDenseRaw(ar, bc, cdata)
+}
+
+func MultiplyFast(A, B Matrix) *Dense {
+	ar, ac := A.Dim()
+	br, bc := B.Dim()
+	if br != ac {
+		log.Panicf("mismatch of dimensions (%d x %d) and (%d x %d)", ar, ac, br, bc)
+	}
+	cdata := make([]float64, ar*bc)
+
+	const blockSize = 8
+	maxProc := runtime.GOMAXPROCS(0)
+	workWidth := umath.DivRU(umath.DivRU(ar, maxProc), blockSize) * blockSize
+
+	var wg sync.WaitGroup
+	for pnum := 0; pnum < maxProc && pnum*workWidth < ar; pnum++ {
+		wg.Add(1)
+		go func(start, width int) {
+			for ro := start; ro < umath.MinI(start+width, ar); ro += blockSize {
+				for co := 0; co < bc; co += blockSize {
+					for ko := 0; ko < ac; ko += blockSize {
+						for r := ro; r < umath.MinI(ro+blockSize, ar); r++ {
+							for c := co; c < umath.MinI(co+blockSize, bc); c++ {
+								var sum float64
+								if ko == 0 {
+									sum = 0.0
+								} else {
+									sum = cdata[r*bc+c]
+								}
+								for k := ko; k < umath.MinI(ko+blockSize, ac); k++ {
+									sum += A.At(r, k) * B.At(k, c)
+								}
+								cdata[r*bc+c] = sum
+							}
+						}
+					}
+				}
+			}
+			wg.Done()
+		}(pnum*workWidth, workWidth)
 	}
 	wg.Wait()
 
