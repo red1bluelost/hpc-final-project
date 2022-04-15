@@ -61,11 +61,13 @@ int main(const int argc, const char *argv[]) {
   {
     uint64_t dur_import = end_import - start,
              dur_multiply = end_multiply - end_import,
-             dur_export = end_export - end_multiply;
+             dur_export = end_export - end_multiply,
+             dur_total = end_export - start;
     printf("-- Timing MatMul C --\n");
     printf("Import: %lu us\n", dur_import);
     printf("Multiply: %lu us\n", dur_multiply);
     printf("Export: %lu us\n", dur_export);
+    printf("Total: %lu us\n", dur_total);
   }
 
   if (verify) {

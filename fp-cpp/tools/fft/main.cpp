@@ -40,12 +40,13 @@ int main(const int Argc, const char *Argv[]) {
 
   {
     auto DurImport = EndImport - Start, DurFFT = EndFFT - EndImport,
-         DurExport = EndExport - EndFFT;
+         DurExport = EndExport - EndFFT, DurTotal = EndExport - Start;
     std::cout << "-- Timing FFT C++ --\n";
     using namespace std::chrono;
     for (const auto &[S, D] :
          {std::make_pair("Import", DurImport), std::make_pair("FFT", DurFFT),
-          std::make_pair("Export", DurExport)})
+          std::make_pair("Export", DurExport),
+          std::make_pair("Total", DurTotal)})
       std::cout << S << ": " << duration_cast<microseconds>(D).count()
                 << "us\n";
   }

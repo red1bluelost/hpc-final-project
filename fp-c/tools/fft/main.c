@@ -42,11 +42,12 @@ int main(const int argc, const char *argv[]) {
 
   {
     uint64_t dur_import = end_import - start, dur_fft = end_fft - end_import,
-             dur_export = end_export - end_fft;
+             dur_export = end_export - end_fft, dur_total = end_export - start;
     printf("-- Timing FFT C --\n");
     printf("Import: %lu us\n", dur_import);
     printf("FFT: %lu us\n", dur_fft);
     printf("Export: %lu us\n", dur_export);
+    printf("Total: %lu us\n", dur_total);
   }
 
   if (verify) {

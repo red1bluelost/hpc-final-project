@@ -28,11 +28,13 @@ func main() {
 	durImport := endImport.Sub(start)
 	durFFT := endFFT.Sub(endImport)
 	durExport := endExport.Sub(endFFT)
+	durTotal := endExport.Sub(start)
 
 	fmt.Printf("-- Timing FFT Go --\n")
 	fmt.Printf("Import: %d us\n", durImport.Microseconds())
 	fmt.Printf("FFT: %d us\n", durFFT.Microseconds())
 	fmt.Printf("Export: %d us\n", durExport.Microseconds())
+	fmt.Printf("Total: %d us\n", durTotal.Microseconds())
 
 	if *verify {
 		XC := util.ImportVec("X")
