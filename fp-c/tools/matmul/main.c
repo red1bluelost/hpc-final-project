@@ -46,7 +46,7 @@ int main(const int argc, const char *argv[]) {
   uint64_t end_import = clock_us();
 
   matrix_t mat_c;
-  matrix_multiply(&mat_a, &mat_b, &mat_c);
+  matrix_multiply_fast(&mat_a, &mat_b, &mat_c);
   uint64_t end_multiply = clock_us();
 
   {

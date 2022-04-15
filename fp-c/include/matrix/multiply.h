@@ -3,14 +3,26 @@
 
 #include "matrix/matrix.h"
 
-void matrix_multiply_r(const double *Adata, size_t ARows, size_t ACols,
-                       const double *Bdata, size_t BRows, size_t BCols,
-                       double **Cdata);
+void matrix_multiply_r(const double *a_data, size_t a_rows, size_t a_cols,
+                       const double *b_data, size_t b_rows, size_t b_cols,
+                       double **c_data);
 
-inline void matrix_multiply(const matrix_t *A, const matrix_t *B, matrix_t *C) {
-  matrix_multiply_r(A->data, A->rows, A->cols, B->data, B->rows, B->cols,
-                    &C->data);
-  C->rows = A->rows, C->cols = B->cols;
+inline void matrix_multiply(const matrix_t *a_mat, const matrix_t *b_mat,
+                            matrix_t *c_mat) {
+  matrix_multiply_r(a_mat->data, a_mat->rows, a_mat->cols, b_mat->data,
+                    b_mat->rows, b_mat->cols, &c_mat->data);
+  c_mat->rows = a_mat->rows, c_mat->cols = b_mat->cols;
+}
+
+void matrix_multiply_fast_r(const double *a_data, size_t a_rows, size_t a_cols,
+                            const double *b_data, size_t b_rows, size_t b_cols,
+                            double **c_data);
+
+inline void matrix_multiply_fast(const matrix_t *a_mat, const matrix_t *b_mat,
+                                 matrix_t *c_mat) {
+  matrix_multiply_fast_r(a_mat->data, a_mat->rows, a_mat->cols, b_mat->data,
+                         b_mat->rows, b_mat->cols, &c_mat->data);
+  c_mat->rows = a_mat->rows, c_mat->cols = b_mat->cols;
 }
 
 #endif  // FP_C_MATRIX_MULTIPLY_H
