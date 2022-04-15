@@ -31,7 +31,7 @@ int main(const int Argc, const char *Argv[]) {
   }
   auto EndImport = std::chrono::high_resolution_clock::now();
 
-  matrix::Dense C = matrix::multiply(A, B);
+  matrix::Dense C = matrix::multiplyFast(A, B);
   auto EndMultiply = std::chrono::high_resolution_clock::now();
 
   {

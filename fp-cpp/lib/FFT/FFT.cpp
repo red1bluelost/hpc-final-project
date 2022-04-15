@@ -1,7 +1,6 @@
 #include "FFT/FFT.h"
 #include "Util/Math.h"
 
-#include <algorithm>
 #include <numbers>
 
 using namespace fft;

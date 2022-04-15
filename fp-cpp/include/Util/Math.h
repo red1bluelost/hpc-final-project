@@ -19,6 +19,11 @@ template <std::integral IntT>
   return R;
 }
 
+template <std::integral IntT>
+[[nodiscard]] inline constexpr IntT divRU(IntT N, IntT D) noexcept {
+  return 1 + (N - 1) / D;
+}
+
 } // namespace util
 
 #endif // FP_CPP_UTIL_MATH_H
