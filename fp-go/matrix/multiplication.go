@@ -40,9 +40,7 @@ func MultiplyBlocked(A, B Matrix) *Dense {
 				for r := ro; r < umath.MinI(ro+blockSize, ar); r++ {
 					for c := co; c < umath.MinI(co+blockSize, bc); c++ {
 						var sum float64
-						if ko == 0 {
-							sum = 0.0
-						} else {
+						if ko != 0 {
 							sum = cdata[r*bc+c]
 						}
 						for k := ko; k < umath.MinI(ko+blockSize, ac); k++ {
@@ -108,42 +106,39 @@ func MultiplyFast(A, B Matrix) *Dense {
 			for ro := start; ro < umath.MinI(start+width, ar); ro += blockSize {
 				for co := 0; co < bc; co += blockSize {
 					for ko := 0; ko < ac; ko += blockSize {
-						for r := ro; r < umath.MinI(ro+blockSize, ar); {
-							if r+4 <= umath.MinI(ro+blockSize, ar) {
-								for c := co; c < umath.MinI(co+blockSize, bc); c++ {
+						for r := ro; r < umath.MinI(ro+blockSize, ar); r++ {
+							for c := co; c < umath.MinI(co+blockSize, bc); {
+								if c+4 <= umath.MinI(co+blockSize, bc) {
 									var sum [4]float64
 									if ko != 0 {
 										for i := 0; i < 4; i++ {
-											sum[i] = cdata[(r+i)*bc+c]
+											sum[i] = cdata[r*bc+c+i]
 										}
 									}
 									for k := ko; k < umath.MinI(ko+blockSize, ac); k++ {
 										for i := 0; i < 4; i++ {
-											sum[i] += A.At(r+i, k) * B.At(k, c)
+											sum[i] += A.At(r, k) * B.At(k, c+i)
 										}
-
 									}
 									for i := 0; i < 4; i++ {
-										cdata[(r+i)*bc+c] = sum[i]
+										cdata[r*bc+c+i] = sum[i]
 									}
-								}
-								r += 4
-							} else {
-								for c := co; c < umath.MinI(co+blockSize, bc); c++ {
+									c += 4
+								} else {
 									var sum float64
-									if ko == 0 {
-										sum = 0.0
-									} else {
+									if ko != 0 {
 										sum = cdata[r*bc+c]
 									}
 									for k := ko; k < umath.MinI(ko+blockSize, ac); k++ {
 										sum += A.At(r, k) * B.At(k, c)
 									}
 									cdata[r*bc+c] = sum
+									c++
 								}
-								r++
+
 							}
 						}
+
 					}
 				}
 			}
