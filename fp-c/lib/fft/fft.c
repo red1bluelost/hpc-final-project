@@ -2,13 +2,9 @@
 
 #include <math.h>
 
-extern inline void fft_dit_r2(fft_vector_t* vec);
+#include "util/math.h"
 
-static int log2i(int i) {
-  int r = 0;
-  while (1 << r < i) r++;
-  return r;
-}
+extern inline void fft_dit_r2(fft_vector_t* vec);
 
 static void bitrev(fft_cmplx_t* data, size_t size) {
   int n = (int)size;

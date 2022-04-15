@@ -43,9 +43,11 @@ set(MATRIX_HEADER_FILES
         ${PROJECT_HEADER_DIR}/matrix/multiply.h)
 
 set(UTIL_SOURCE_FILES
-        ${PROJECT_SOURCE_DIR}/util/argparse.c)
+        ${PROJECT_SOURCE_DIR}/util/argparse.c
+        ${PROJECT_SOURCE_DIR}/util/math.c)
 set(UTIL_HEADER_FILES
-        ${PROJECT_HEADER_DIR}/util/argparse.h)
+        ${PROJECT_HEADER_DIR}/util/argparse.h
+        ${PROJECT_HEADER_DIR}/util/math.h)
 
 add_executable(fft
         tools/fft/main.c
