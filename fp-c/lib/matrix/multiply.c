@@ -22,7 +22,7 @@ void matrix_multiply_r(const double *a_data, size_t a_rows, size_t a_cols,
   for (size_t R = 0; R < a_rows; ++R) {
     for (size_t C = 0; C < b_cols; ++C) {
       double Sum = 0.0;
-      for (size_t K = 0; K < a_cols; K++)
+      for (size_t K = 0; K < a_cols; ++K)
         Sum += a_data[R * a_cols + K] * b_data[K * b_cols + C];
       data_out[R * b_cols + C] = Sum;
     }
@@ -45,13 +45,29 @@ static void *mm_thrd_fast(void *arg) {
        RO += BLOCKSIZE) {
     for (size_t CO = 0; CO < t->b_cols; CO += BLOCKSIZE) {
       for (size_t KO = 0; KO < t->a_cols; KO += BLOCKSIZE) {
-        for (size_t R = RO; R < minz(RO + BLOCKSIZE, t->a_rows); R++) {
-          for (size_t C = CO; C < minz(CO + BLOCKSIZE, t->b_cols); C++) {
-            double sum = KO == 0 ? 0.0 : t->c_data[R * t->b_cols + C];
-            for (size_t K = KO; K < minz(KO + BLOCKSIZE, t->a_cols); K++)
-              sum +=
-                  t->a_data[R * t->a_cols + K] * t->b_data[K * t->b_cols + C];
-            t->c_data[R * t->b_cols + C] = sum;
+        for (size_t R = RO; R < minz(RO + BLOCKSIZE, t->a_rows);) {
+          if (R + 4 <= minz(RO + BLOCKSIZE, t->a_rows)) {
+            for (size_t C = CO; C < minz(CO + BLOCKSIZE, t->b_cols); ++C) {
+              double sum[4];
+              for (size_t i = 0; i < 4; ++i)
+                sum[i] = KO == 0 ? 0.0 : t->c_data[(R + i) * t->b_cols + C];
+              for (size_t K = KO; K < minz(KO + BLOCKSIZE, t->a_cols); ++K)
+                for (size_t i = 0; i < 4; ++i)
+                  sum[i] += t->a_data[(R + i) * t->a_cols + K] *
+                            t->b_data[K * t->b_cols + C];
+              for (size_t i = 0; i < 4; ++i)
+                t->c_data[(R + i) * t->b_cols + C] = sum[i];
+            }
+            R += 4;
+          } else {
+            for (size_t C = CO; C < minz(CO + BLOCKSIZE, t->b_cols); ++C) {
+              double sum = KO == 0 ? 0.0 : t->c_data[R * t->b_cols + C];
+              for (size_t K = KO; K < minz(KO + BLOCKSIZE, t->a_cols); ++K)
+                sum +=
+                    t->a_data[R * t->a_cols + K] * t->b_data[K * t->b_cols + C];
+              t->c_data[R * t->b_cols + C] = sum;
+            }
+            ++R;
           }
         }
       }
