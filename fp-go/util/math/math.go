@@ -21,7 +21,7 @@ func CEqual(x, y complex128, t float64) bool {
 }
 
 func DivRU(n, d int) int {
-	return 1 + (n-1)/d
+	return (n + d - 1) / d
 }
 
 func MinI(vals ...int) int {

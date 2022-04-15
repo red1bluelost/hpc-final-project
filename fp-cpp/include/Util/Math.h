@@ -21,7 +21,7 @@ template <std::integral IntT>
 
 template <std::integral IntT>
 [[nodiscard]] inline constexpr IntT divRU(IntT N, IntT D) noexcept {
-  return 1 + (N - 1) / D;
+  return (N + D - 1) / D;
 }
 
 } // namespace util
