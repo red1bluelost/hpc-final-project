@@ -8,6 +8,12 @@ set(CMAKE_USE_PTHREADS_INIT ON)
 
 find_package(Threads REQUIRED)
 
+include(CheckCCompilerFlag)
+CHECK_C_COMPILER_FLAG("-march=native" COMPILER_SUPPORTS_MARCH_NATIVE)
+if (COMPILER_SUPPORTS_MARCH_NATIVE)
+    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+endif ()
+
 add_compile_options(
         -Wall
         -Wextra
