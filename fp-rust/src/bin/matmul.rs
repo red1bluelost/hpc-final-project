@@ -1,4 +1,4 @@
-use fp_rust::matrix::{*, multiply::*};
+use fp_rust::matrix::{multiply::*, *};
 use std::fs::File;
 use std::time::Instant;
 
@@ -17,7 +17,6 @@ fn main() {
     let mut f = File::create("C.mat").expect("failed to open file for matrix C");
     Matrix::export(&mut f, &c).expect("failed to export matrix C");
     let end_export = Instant::now();
-
 
     println!("-- Timing MatMul Rust --");
     for (s, d) in [

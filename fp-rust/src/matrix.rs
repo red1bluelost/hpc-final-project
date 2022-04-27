@@ -62,13 +62,13 @@ impl Matrix {
         let mut line_iter = line
             .trim()
             .split(' ')
-            .map(|w| str::parse::<usize>(w).expect("failed to parse dimensions"));
+            .map(|w| w.parse().expect("failed to parse dimensions"));
         let rows = line_iter.next().expect("missing rows");
         let cols = line_iter.next().expect("missing columns");
         let mut data: Vec<f64> = Vec::with_capacity(rows * cols);
         for line in br.lines() {
             for word in line.expect("missing data row").split_whitespace() {
-                data.push(str::parse(word).expect("failed to parse data"));
+                data.push(word.parse().expect("failed to parse data"));
             }
         }
         Ok(Self::from_vec(rows, cols, data))
