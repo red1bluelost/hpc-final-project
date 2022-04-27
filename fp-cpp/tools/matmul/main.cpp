@@ -44,18 +44,16 @@ int main(const int Argc, const char *Argv[]) {
   }
   auto EndExport = std::chrono::high_resolution_clock::now();
 
-  {
-    auto DurImport = EndImport - Start, DurMultiply = EndMultiply - EndImport,
-         DurExport = EndExport - EndMultiply, DurTotal = EndExport - Start;
-    std::cout << "-- Timing MatMul C++ --\n";
-    using namespace std::chrono;
-    for (const auto &[S, D] : {std::make_pair("Import", DurImport),
-                               std::make_pair("Multiply", DurMultiply),
-                               std::make_pair("Export", DurExport),
-                               std::make_pair("Total", DurTotal)})
-      std::cout << S << ": " << duration_cast<microseconds>(D).count()
-                << "us\n";
-  }
+  std::cout << "-- Timing MatMul C++ --\n";
+  for (const auto &[S, D] :
+       {std::make_pair("Import", EndImport - Start),
+        std::make_pair("Multiply", EndMultiply - EndImport),
+        std::make_pair("Export", EndExport - EndMultiply),
+        std::make_pair("Total", EndExport - Start)})
+    std::cout
+        << S << ": "
+        << std::chrono::duration_cast<std::chrono::microseconds>(D).count()
+        << " us\n";
 
   if (Verify && C != matrix::multiply(A, B)) {
     std::cerr << "multiplication failed\n";
