@@ -2,8 +2,8 @@ use super::*;
 
 pub fn multiply(a: &Matrix, b: &Matrix) -> Matrix {
     let (a_row, a_col) = a.dim();
-    let (b_row, b_col) = a.dim();
-    if a_col != b_col {
+    let (b_row, b_col) = b.dim();
+    if a_col != b_row {
         panic!(
             "dimenions do not match: ({}x{}) ({}x{})",
             a_row, a_col, b_row, b_col
