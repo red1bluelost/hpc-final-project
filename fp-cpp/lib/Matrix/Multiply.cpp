@@ -53,17 +53,18 @@ Dense matrix::multiplyParallel(const Dense &A, const Dense &B) {
   std::tie(BRows, BCols) = B.dim();
   assert(ACols == BRows && "mismatch of dimensions");
 
+  constexpr IndexT BlockSize = 8;
   IndexT MaxProc = std::thread::hardware_concurrency();
-  IndexT WorkWidth = util::divRU(ARows, MaxProc);
+  IndexT WorkWidth =
+      util::divRU(util::divRU(ARows, MaxProc), BlockSize) * BlockSize;
 
   Dense CMat(ARows, BCols);
   std::vector<std::thread> Thrds(MaxProc);
 
-  IndexT WorkStart = 0;
-  for (auto &Thrd : Thrds)
-    Thrd = std::thread(
-        [ARows, ACols, BCols, &A, &B, &CMat](IndexT Start, IndexT Width) {
-          for (IndexT R = Start; R < std::min(Start + Width, ARows); ++R) {
+  for (IndexT TID = 0; TID < MaxProc && TID * WorkWidth < ARows; ++TID)
+    Thrds[TID] = std::thread(
+        [WorkWidth, ARows, ACols, BCols, &A, &B, &CMat](IndexT Start) {
+          for (IndexT R = Start; R < std::min(Start + WorkWidth, ARows); ++R) {
             for (IndexT C = 0; C < BCols; ++C) {
               double Sum = 0.0;
               for (IndexT K = 0; K < ACols; ++K)
@@ -72,7 +73,7 @@ Dense matrix::multiplyParallel(const Dense &A, const Dense &B) {
             }
           }
         },
-        WorkStart, WorkStart += WorkWidth);
+        TID * WorkWidth);
 
   for (auto &Thrd : Thrds)
     Thrd.join();
@@ -96,8 +97,8 @@ Dense matrix::multiplyFast(const Dense &A, const Dense &B) {
 
   for (IndexT TID = 0; TID < MaxProc && TID * WorkWidth < ARows; ++TID)
     Thrds[TID] = std::thread(
-        [ARows, ACols, BCols, &A, &B, &CMat](IndexT Start, IndexT Width) {
-          for (IndexT RO = Start; RO < std::min(Start + Width, ARows);
+        [WorkWidth, ARows, ACols, BCols, &A, &B, &CMat](IndexT Start) {
+          for (IndexT RO = Start; RO < std::min(Start + WorkWidth, ARows);
                RO += BlockSize) {
             for (IndexT CO = 0; CO < BCols; CO += BlockSize) {
               for (IndexT KO = 0; KO < ACols; KO += BlockSize) {
@@ -128,7 +129,7 @@ Dense matrix::multiplyFast(const Dense &A, const Dense &B) {
             }
           }
         },
-        TID * WorkWidth, WorkWidth);
+        TID * WorkWidth);
 
   for (IndexT TID = 0; TID < MaxProc && TID * WorkWidth < ARows; ++TID)
     Thrds[TID].join();
