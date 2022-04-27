@@ -1,5 +1,4 @@
 use std::io::{self, BufRead, Write};
-use std::str;
 
 pub mod multiply;
 
