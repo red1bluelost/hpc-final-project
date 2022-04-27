@@ -73,3 +73,11 @@ impl Matrix {
         Ok(Self::from_vec(rows, cols, data))
     }
 }
+
+impl Eq for Matrix {}
+impl PartialEq for Matrix {
+    fn eq(&self, other: &Self) -> bool {
+        self.dim() == other.dim()
+            && std::iter::zip(&self.data, &other.data).all(|(&a, &b)| (a - b).abs() <= 0.0001)
+    }
+}
