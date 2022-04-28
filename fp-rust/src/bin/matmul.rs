@@ -24,7 +24,7 @@ fn main() {
     }
     let end_import = Instant::now();
 
-    let c = multiply_blocked(&a, &b);
+    let c = multiply_parallel(&a, &b);
     let end_multiply = Instant::now();
 
     let mut f = File::create("C.mat").expect("failed to open file for matrix C");

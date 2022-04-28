@@ -27,6 +27,14 @@ impl Matrix {
         Matrix { rows, cols, data }
     }
 
+    pub fn identity(s: usize) -> Self {
+        let mut m = Matrix::new(s, s);
+        for i in 0..s {
+            m.set(i, i, 1.0);
+        }
+        m
+    }
+
     #[inline]
     pub fn dim(&self) -> (usize, usize) {
         (self.rows, self.cols)
