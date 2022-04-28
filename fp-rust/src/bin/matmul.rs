@@ -28,7 +28,7 @@ fn main() {
     let end_multiply = Instant::now();
 
     let mut f = File::create("C.mat").expect("failed to open file for matrix C");
-    Matrix::export(&mut f, &c).expect("failed to export matrix C");
+    c.export(&mut f).expect("failed to export matrix C");
     let end_export = Instant::now();
 
     println!("-- Timing MatMul Rust --");

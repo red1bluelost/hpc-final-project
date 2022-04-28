@@ -50,12 +50,12 @@ impl Matrix {
         self.data[r * self.cols + c] = v;
     }
 
-    pub fn export(w: &mut impl io::Write, m: &Self) -> io::Result<()> {
+    pub fn export(&self, w: &mut impl io::Write) -> io::Result<()> {
         let bw = &mut io::BufWriter::new(w);
-        write!(bw, "{} {}\n", m.rows, m.cols)?;
-        for r in 0..m.rows {
-            for c in 0..m.cols {
-                write!(bw, "{:.6} ", m.at(r, c))?;
+        write!(bw, "{} {}\n", self.rows, self.cols)?;
+        for r in 0..self.rows {
+            for c in 0..self.cols {
+                write!(bw, "{:.6} ", self.at(r, c))?;
             }
             write!(bw, "\n")?;
         }
