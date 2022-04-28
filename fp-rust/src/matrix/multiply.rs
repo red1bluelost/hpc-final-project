@@ -93,6 +93,74 @@ pub fn multiply_parallel(a: &Matrix, b: &Matrix) -> Matrix {
     c_mat
 }
 
+pub fn multiply_fast(a: &Matrix, b: &Matrix) -> Matrix {
+    let (a_row, a_col) = a.dim();
+    let (b_row, b_col) = b.dim();
+    if a_col != b_row {
+        panic!(
+            "dimenions do not match: ({}x{}) ({}x{})",
+            a_row, a_col, b_row, b_col
+        );
+    }
+    let mut c_mat = Matrix::new(a_row, b_col);
+
+    const BLOCK_SIZE: usize = 8;
+    let max_proc = std::thread::available_parallelism().unwrap().get();
+    let work_width = util::div_ru(util::div_ru(a_row, max_proc), BLOCK_SIZE) * BLOCK_SIZE;
+
+    thread::scope(|s| {
+        let mut rest = c_mat.data.as_mut_slice();
+        for start in (0..a_row).step_by(work_width) {
+            let (slice, remain) = if start + work_width <= a_row {
+                rest.split_at_mut(work_width * b_col)
+            } else {
+                (rest, [].as_mut_slice())
+            };
+            rest = remain;
+            s.spawn(move |_| {
+                let idx = |r, c| (r - start) * b_col + c;
+                for ro in (start..min(start + work_width, a_row)).step_by(BLOCK_SIZE) {
+                    for co in (0..b_col).step_by(BLOCK_SIZE) {
+                        for ko in (0..a_col).step_by(BLOCK_SIZE) {
+                            for r in ro..min(ro + BLOCK_SIZE, a_row) {
+                                let mut c = co;
+                                while c < min(co + BLOCK_SIZE, b_col) {
+                                    if c + 4 <= min(co + BLOCK_SIZE, b_col) {
+                                        let mut sum = [0.0; 4];
+                                        if ko != 0 {
+                                            for i in 0..4 {
+                                                sum[i] = slice[idx(r, c + i)];
+                                            }
+                                        }
+                                        for k in ko..min(ko + BLOCK_SIZE, a_col) {
+                                            for i in 0..4 {
+                                                sum[i] += a.at(r, k) * b.at(k, c + i);
+                                            }
+                                        }
+                                        for i in 0..4 {
+                                            slice[idx(r, c + i)] = sum[i];
+                                        }
+                                        c += 4;
+                                    } else {
+                                        let mut sum = if ko == 0 { 0.0 } else { slice[idx(r, c)] };
+                                        for k in ko..min(ko + BLOCK_SIZE, a_col) {
+                                            sum += a.at(r, k) * b.at(k, c);
+                                        }
+                                        slice[idx(r, c)] = sum;
+                                        c += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    })
+    .unwrap();
+    c_mat
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -135,5 +203,10 @@ mod test {
     #[test]
     fn multiply_parallel_test() {
         compare_multiplies(50, multiply_blocked, multiply_parallel);
+    }
+
+    #[test]
+    fn multiply_fast_test() {
+        compare_multiplies(50, multiply_blocked, multiply_fast);
     }
 }
