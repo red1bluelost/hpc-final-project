@@ -15,7 +15,7 @@ template <std::integral IntT>
 [[nodiscard]] inline constexpr IntT log2(IntT I) noexcept {
   IntT R = 0;
   while (1 << R < I)
-    R++;
+    ++R;
   return R;
 }
 
