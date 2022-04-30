@@ -38,18 +38,15 @@ int main(const int Argc, const char *Argv[]) {
   }
   auto EndExport = std::chrono::high_resolution_clock::now();
 
-  {
-    auto DurImport = EndImport - Start, DurFFT = EndFFT - EndImport,
-         DurExport = EndExport - EndFFT, DurTotal = EndExport - Start;
-    std::cout << "-- Timing FFT C++ --\n";
-    using namespace std::chrono;
-    for (const auto &[S, D] :
-         {std::make_pair("Import", DurImport), std::make_pair("FFT", DurFFT),
-          std::make_pair("Export", DurExport),
-          std::make_pair("Total", DurTotal)})
-      std::cout << S << ": " << duration_cast<microseconds>(D).count()
-                << "us\n";
-  }
+  std::cout << "-- Timing FFT C++ --\n";
+  for (const auto &[S, D] : {std::make_pair("Import", EndImport - Start),
+                             std::make_pair("FFT", EndFFT - EndImport),
+                             std::make_pair("Export", EndExport - EndFFT),
+                             std::make_pair("Total", EndExport - Start)})
+    std::cout
+        << S << ": "
+        << std::chrono::duration_cast<std::chrono::microseconds>(D).count()
+        << " us\n";
 
   if (Verify) {
     std::ifstream IF("X.vec");

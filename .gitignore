@@ -1,8 +1,11 @@
 .idea/
+target/
 *.swp
 *.exe
 *.mat
 *.vec
+*.out
+*.log
 
 matmul
 !matmul/
@@ -14,5 +17,6 @@ genvec
 !genvec/
 
 cmake-build-*
+experiment_*
 temp.txt
 
