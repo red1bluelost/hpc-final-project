@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 project(fp_cpp)
 
+include(FetchContent)
+
+FetchContent_Declare(fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+        GIT_TAG master)
+FetchContent_MakeAvailable(fmt)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -56,6 +63,8 @@ add_executable(fft
         ${FFT_HEADER_FILES}
         ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
+target_link_libraries(fft
+        fmt::fmt)
 
 add_executable(matmul
         tools/matmul/main.cpp
@@ -63,4 +72,6 @@ add_executable(matmul
         ${MATRIX_HEADER_FILES}
         ${UTIL_SOURCE_FILES}
         ${UTIL_HEADER_FILES})
-target_link_libraries(matmul Threads::Threads)
+target_link_libraries(matmul
+        fmt::fmt
+        Threads::Threads)
