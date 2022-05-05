@@ -10,13 +10,14 @@ using namespace matrix;
 
 std::ostream &operator<<(std::ostream &OS, const Dense &M) {
   auto [Rows, Cols] = M.dim();
+  const auto P = OS.precision();
   OS << Rows << ' ' << Cols << '\n' << std::setprecision(8);
   for (IndexT R = 0; R < Rows; ++R) {
     for (IndexT C = 0; C < Cols; ++C)
       OS << M.at(R, C) << ' ';
     OS << '\n';
   }
-  return OS;
+  return OS << std::setprecision(P);
 }
 
 std::istream &operator>>(std::istream &IS, Dense &M) {

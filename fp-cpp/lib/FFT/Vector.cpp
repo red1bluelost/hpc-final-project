@@ -6,12 +6,13 @@
 using namespace fft;
 
 std::ostream &operator<<(std::ostream &OS, const Vector &V) {
+  const auto P = OS.precision();
   OS << V.size() << '\n' << std::setprecision(8);
   for (const auto &C : V) {
     double R = C.real(), I = C.imag();
     OS << '(' << std::noshowpos << R << std::showpos << I << "i)\n";
   }
-  return OS << std::noshowpos;
+  return OS << std::noshowpos << std::setprecision(P);
 }
 
 std::istream &operator>>(std::istream &IS, Vector &V) {
