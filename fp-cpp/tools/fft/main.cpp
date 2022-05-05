@@ -3,6 +3,8 @@
 #include "Util/ArgParse.h"
 #include "Util/Math.h"
 
+#include <fmt/os.h>
+
 #include <cassert>
 #include <chrono>
 #include <fstream>
@@ -28,14 +30,7 @@ int main(const int Argc, const char *Argv[]) {
   fft::fftDitR2(V);
   auto EndFFT = std::chrono::high_resolution_clock::now();
 
-  {
-    std::ofstream OF;
-    constexpr std::streamsize BufSize = 1 << 20;
-    char Buf[BufSize];
-    OF.rdbuf()->pubsetbuf(Buf, BufSize);
-    OF.open("Xf.vec");
-    OF << V;
-  }
+  fmt::output_file("Xf.vec").print("{}", V);
   auto EndExport = std::chrono::high_resolution_clock::now();
 
   std::cout << "-- Timing FFT C++ --\n";
