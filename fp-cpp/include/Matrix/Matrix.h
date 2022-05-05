@@ -1,6 +1,8 @@
 #ifndef FP_CPP_MATRIX_MATRIX_H
 #define FP_CPP_MATRIX_MATRIX_H
 
+#include <fmt/format.h>
+
 #include <cassert>
 #include <cstddef>
 #include <istream>
@@ -44,5 +46,28 @@ public:
 
 std::ostream &operator<<(std::ostream &OS, const matrix::Dense &M);
 std::istream &operator>>(std::istream &IS, matrix::Dense &M);
+
+template <> struct fmt::formatter<matrix::Dense> {
+  constexpr auto parse(format_parse_context &Ctx) -> decltype(Ctx.begin()) {
+    auto It = Ctx.begin(), End = Ctx.end();
+    if (It != End && *It != '}')
+      throw format_error("invalid format");
+    return It;
+  }
+
+  template <typename FormatContext>
+  auto format(const matrix::Dense &M, FormatContext &Ctx)
+      -> decltype(Ctx.out()) {
+    auto &&O = Ctx.out();
+    auto [Rows, Cols] = M.dim();
+    format_to(O, "{} {}\n", Rows, Cols);
+    for (matrix::IndexT R = 0; R < Rows; ++R) {
+      for (matrix::IndexT C = 0; C < Cols; ++C)
+        format_to(O, "{} ", M.at(R, C));
+      format_to(O, "\n");
+    }
+    return format_to(O, "");
+  }
+};
 
 #endif // FP_CPP_MATRIX_MATRIX_H

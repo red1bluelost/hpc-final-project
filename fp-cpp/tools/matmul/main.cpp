@@ -2,6 +2,8 @@
 #include "Matrix/Multiply.h"
 #include "Util/ArgParse.h"
 
+#include <fmt/os.h>
+
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -34,14 +36,7 @@ int main(const int Argc, const char *Argv[]) {
   matrix::Dense C = matrix::multiplyFast(A, B);
   auto EndMultiply = std::chrono::high_resolution_clock::now();
 
-  {
-    std::ofstream CFile;
-    constexpr std::streamsize BufSize = 1 << 20;
-    char Buf[BufSize];
-    CFile.rdbuf()->pubsetbuf(Buf, BufSize);
-    CFile.open("C.mat");
-    CFile << C;
-  }
+  fmt::output_file("C.mat").print("{}", C);
   auto EndExport = std::chrono::high_resolution_clock::now();
 
   std::cout << "-- Timing MatMul C++ --\n";
