@@ -23,10 +23,7 @@ std::istream &operator>>(std::istream &IS, fft::Vector &V);
 
 template <> struct fmt::formatter<fft::Vector> {
   constexpr auto parse(format_parse_context &Ctx) -> decltype(Ctx.begin()) {
-    auto It = Ctx.begin(), End = Ctx.end();
-    if (It != End && *It != '}')
-      throw format_error("invalid format");
-    return It;
+    return Ctx.begin();
   }
 
   template <typename FormatContext>

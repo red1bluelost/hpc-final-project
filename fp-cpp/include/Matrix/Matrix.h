@@ -49,10 +49,7 @@ std::istream &operator>>(std::istream &IS, matrix::Dense &M);
 
 template <> struct fmt::formatter<matrix::Dense> {
   constexpr auto parse(format_parse_context &Ctx) -> decltype(Ctx.begin()) {
-    auto It = Ctx.begin(), End = Ctx.end();
-    if (It != End && *It != '}')
-      throw format_error("invalid format");
-    return It;
+    return Ctx.begin();
   }
 
   template <typename FormatContext>
